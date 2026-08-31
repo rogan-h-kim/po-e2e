@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "No-code E2E test recorder for a deployed site — Chrome extension (accessibility-based selectors + CDP trusted-event replay)",
+  "description": "No-code E2E test recorder for a deployed site - Chrome extension (accessibility-based selectors + CDP trusted-event replay)",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && eslint . && vite build",

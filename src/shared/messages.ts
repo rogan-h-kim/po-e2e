@@ -6,8 +6,10 @@ export type Command =
   | { type: 'STOP_INSPECT' }
   | { type: 'START_RECORD' }
   | { type: 'STOP_RECORD' }
-  | { type: 'PLAY'; steps: Step[]; continueOnFailure?: boolean }
+  | { type: 'PLAY'; steps: Step[]; continueOnFailure?: boolean; scenarioId?: string }
   | { type: 'PLAY_STEP'; step: Step }
+  /** Run several scenarios back to back (a whole suite) on one debugger session. */
+  | { type: 'PLAY_SUITE'; scenarios: SuiteItem[]; continueOnFailure?: boolean }
   | { type: 'HIGHLIGHT'; selector: Selector };
 
 // Events: Content -> Background -> SidePanel (broadcast via chrome.runtime)
@@ -18,7 +20,15 @@ export type Event =
   | { type: 'RECORD_ENDED' }
   | { type: 'PLAY_STEP_START'; stepId: string; index: number; total: number }
   | { type: 'PLAY_PROGRESS'; result: StepResult; index: number; total: number }
-  | { type: 'PLAY_DONE'; results: StepResult[]; startedAt: number; finishedAt: number };
+  /** `scenarioId` is set for scenario runs (PLAY with an id, or each scenario of PLAY_SUITE). */
+  | { type: 'PLAY_DONE'; results: StepResult[]; startedAt: number; finishedAt: number; scenarioId?: string }
+  | { type: 'SUITE_SCENARIO_START'; scenarioId: string; index: number; total: number }
+  | { type: 'SUITE_DONE'; total: number; passed: number };
+
+export interface SuiteItem {
+  id: string;
+  steps: Step[];
+}
 
 // Content-directed requests issued by Background (via chrome.tabs.sendMessage).
 // These expect a response.

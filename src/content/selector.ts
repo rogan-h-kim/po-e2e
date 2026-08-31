@@ -191,13 +191,13 @@ export function resolveTarget(el: Element): Element {
  * warning when the selector is ambiguous or low-accuracy.
  */
 export function generateSelector(el: Element): Selector {
-  // 1. Test id — explicit and stable.
+  // 1. Test id - explicit and stable.
   const testid = getTestId(el);
   if (testid) {
     return { strategy: "testid", testid: testid.value };
   }
 
-  // 2. Role + accessible name — the accessibility-first path.
+  // 2. Role + accessible name - the accessibility-first path.
   const role = computeRole(el);
   const name = accessibleName(el);
   if (role && name) {
@@ -218,7 +218,7 @@ export function generateSelector(el: Element): Selector {
     return selector;
   }
 
-  // 4. CSS — fragile, always warn.
+  // 4. CSS - fragile, always warn.
   return {
     strategy: "css",
     css: cssPath(el),

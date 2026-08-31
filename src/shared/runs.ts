@@ -35,6 +35,15 @@ export async function appendRun(run: RunRecord): Promise<RunRecord[]> {
   return mine;
 }
 
+/** The most recent run of every scenario that has one (for the list's ✅/❌ marks). */
+export async function loadLatestRuns(): Promise<Record<string, RunRecord>> {
+  const out: Record<string, RunRecord> = {};
+  for (const r of await loadAll()) {
+    if (!out[r.scenarioId] || r.startedAt > out[r.scenarioId].startedAt) out[r.scenarioId] = r;
+  }
+  return out;
+}
+
 export async function clearRuns(scenarioId: string): Promise<void> {
   const all = await loadAll();
   await saveAll(all.filter((r) => r.scenarioId !== scenarioId));

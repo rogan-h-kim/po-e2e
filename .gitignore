@@ -2,7 +2,7 @@ node_modules/
 dist/
 *.zip
 
-# Secrets — never commit real Supabase keys
+# Secrets - never commit real Supabase keys
 .env
 .env.local
 .env.*.local

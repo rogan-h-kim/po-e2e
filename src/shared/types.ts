@@ -139,7 +139,28 @@ export interface Scenario {
   steps: Step[];
   createdAt: number;
   updatedAt: number;
+  /** Team scenarios belong to a suite; drafts have none. */
+  suiteId?: string;
+  /** One-level grouping inside the suite (a feature area: "AI Draft", "home", …). Undefined = 미분류. */
+  folder?: string;
 }
+
+/**
+ * A suite groups the team scenarios for one product version (or one team).
+ * Runners pick a suite and run one scenario or the whole set; releases are
+ * numbered per suite.
+ */
+export interface Suite {
+  id: string;
+  name: string;
+  archived: boolean;
+  /** Folder names in display order (so empty folders exist and order is stable). */
+  folders: string[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+export const DEFAULT_SUITE_ID = 'main';
 
 export interface StepResult {
   stepId: string;
@@ -149,6 +170,16 @@ export interface StepResult {
   durationMs?: number;
   /** JPEG data URL of the tab at the moment of failure (failed steps only). */
   screenshot?: string;
+}
+
+/** A published version of one suite (one row in the `releases` table). */
+export interface Release {
+  suiteId: string;
+  version: number;
+  publishedAt: number;
+  publishedBy: string | null;
+  /** Scenario ids added/changed/deleted in this release. */
+  changedIds: string[];
 }
 
 /** One full replay of a scenario, kept locally (not synced) for later diagnosis. */

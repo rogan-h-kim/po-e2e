@@ -77,12 +77,26 @@ function hideHighlight() {
   label.style.display = 'none';
 }
 
+/**
+ * True once the extension has been reloaded/updated underneath this page. The
+ * old script instance stays alive in the tab, but every chrome.* call from it
+ * throws "Extension context invalidated" — so we go quiet instead of spamming
+ * the extension's error list. A page reload (F5) brings in the fresh script.
+ */
+const contextGone = () => !chrome.runtime?.id;
+
 function emit(event: Event) {
-  chrome.runtime.sendMessage(event).catch(() => {});
+  if (contextGone()) return;
+  try {
+    chrome.runtime.sendMessage(event).catch(() => {});
+  } catch {
+    /* context invalidated between the check and the call */
+  }
 }
 
 // ---- Inspect (manual element pick) -------------------------------------------
 function onInspectMove(e: MouseEvent) {
+  if (contextGone()) return stopInspect();
   const el = e.target as Element;
   if (!el || el === overlay || el === label) return;
   const target = resolveTarget(el);
@@ -142,6 +156,7 @@ function record(partial: StepDraft) {
 }
 
 function onRecordClick(e: MouseEvent) {
+  if (contextGone()) return stopRecord();
   const target = resolveTarget(e.target as Element);
   // Skip clicks that only focus a field about to be typed into / picked from.
   if (isTextField(target) || target instanceof HTMLSelectElement) return;

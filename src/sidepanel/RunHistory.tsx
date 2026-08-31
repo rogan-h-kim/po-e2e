@@ -27,7 +27,7 @@ export function RunHistory({ runs, selectedId, onSelect, onClear }: Props) {
           return (
             <li key={r.id}>
               <button
-                className={`run-row ${r.ok ? 'ok' : 'fail'} ${r.id === selectedId ? 'selected' : ''}`}
+                className={`run-row ${r.id === selectedId ? 'selected' : ''}`}
                 title="이 실행의 결과를 단계 목록에 표시"
                 onClick={() => onSelect(r)}
               >
@@ -41,7 +41,7 @@ export function RunHistory({ runs, selectedId, onSelect, onClear }: Props) {
           );
         })}
       </ul>
-      <button className="small ghost" onClick={onClear}>
+      <button className="btn sm ghost" onClick={onClear}>
         기록 삭제
       </button>
     </details>

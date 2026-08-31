@@ -4,6 +4,7 @@ import type {
   LocateResponse,
   AssertResponse,
   SimpleResponse,
+  SuiteItem,
 } from '../shared/messages';
 import { RUNTIME } from '../shared/messages';
 import type { KeyName, Selector, Step, StepResult, TextMatch } from '../shared/types';
@@ -344,37 +345,67 @@ async function runStep(tabId: number, step: Step): Promise<StepResult> {
 /**
  * Tabs with a replay in flight. Two concurrent loops on one tab would interleave
  * their input events and the first to finish would detach the debugger from
- * under the other — so a second PLAY/PLAY_STEP for a busy tab is refused.
+ * under the other — so a second PLAY/PLAY_STEP/PLAY_SUITE for a busy tab is refused.
  */
 const playingTabs = new Set<number>();
 
-async function playSteps(steps: Step[], continueOnFailure = false) {
-  const startedAt = Date.now();
+/** Lock the active tab, attach the debugger, run `fn`, and always clean up. */
+async function withReplayTab(fn: (tabId: number) => Promise<void>) {
   const tabId = await activeTabId();
   if (playingTabs.has(tabId)) throw new Error('이 탭에서 이미 재생 중이에요. 끝날 때까지 기다려 주세요.');
   playingTabs.add(tabId);
-  const results: StepResult[] = [];
   try {
     await ensureContent(tabId);
     await cdpAttach(tabId);
-    for (let i = 0; i < steps.length; i++) {
-      const step = steps[i];
-      RUNTIME.emit({ type: 'PLAY_STEP_START', stepId: step.id, index: i, total: steps.length });
-      const t0 = Date.now();
-      const result = await runStep(tabId, step);
-      result.durationMs = Date.now() - t0;
-      if (!result.ok) result.screenshot = await screenshot(tabId);
-      results.push(result);
-      RUNTIME.emit({ type: 'PLAY_PROGRESS', result, index: i, total: steps.length });
-      if (!result.ok && !continueOnFailure) break;
-      await sleep(300); // small settle between steps
-    }
+    await fn(tabId);
   } finally {
     await cdpDetach(tabId);
     playingTabs.delete(tabId);
   }
-  RUNTIME.emit({ type: 'PLAY_DONE', results, startedAt, finishedAt: Date.now() });
 }
+
+/** Run one scenario's steps on an already-attached tab and broadcast progress. */
+async function runScenario(
+  tabId: number,
+  steps: Step[],
+  continueOnFailure: boolean,
+  scenarioId?: string,
+): Promise<StepResult[]> {
+  const startedAt = Date.now();
+  const results: StepResult[] = [];
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i];
+    RUNTIME.emit({ type: 'PLAY_STEP_START', stepId: step.id, index: i, total: steps.length });
+    const t0 = Date.now();
+    const result = await runStep(tabId, step);
+    result.durationMs = Date.now() - t0;
+    if (!result.ok) result.screenshot = await screenshot(tabId);
+    results.push(result);
+    RUNTIME.emit({ type: 'PLAY_PROGRESS', result, index: i, total: steps.length });
+    if (!result.ok && !continueOnFailure) break;
+    await sleep(300); // small settle between steps
+  }
+  RUNTIME.emit({ type: 'PLAY_DONE', results, startedAt, finishedAt: Date.now(), scenarioId });
+  return results;
+}
+
+const playSteps = (steps: Step[], continueOnFailure = false, scenarioId?: string) =>
+  withReplayTab((tabId) => runScenario(tabId, steps, continueOnFailure, scenarioId).then(() => {}));
+
+/** A whole suite: every scenario in order on one debugger session. A failed
+ *  scenario never stops the next one — that is what a regression run is for. */
+const playSuite = (items: SuiteItem[], continueOnFailure = false) =>
+  withReplayTab(async (tabId) => {
+    let passed = 0;
+    for (let i = 0; i < items.length; i++) {
+      const it = items[i];
+      RUNTIME.emit({ type: 'SUITE_SCENARIO_START', scenarioId: it.id, index: i, total: items.length });
+      const results = await runScenario(tabId, it.steps, continueOnFailure, it.id);
+      if (results.length === it.steps.length && results.every((r) => r.ok)) passed++;
+      await sleep(500);
+    }
+    RUNTIME.emit({ type: 'SUITE_DONE', total: items.length, passed });
+  });
 
 // ---- Command router (from side panel) ----------------------------------------
 chrome.runtime.onMessage.addListener((msg: Command, _sender, sendResponse) => {
@@ -393,11 +424,15 @@ chrome.runtime.onMessage.addListener((msg: Command, _sender, sendResponse) => {
           break;
         }
         case 'PLAY':
-          await playSteps(msg.steps, msg.continueOnFailure);
+          await playSteps(msg.steps, msg.continueOnFailure, msg.scenarioId);
           sendResponse({ ok: true });
           break;
         case 'PLAY_STEP':
           await playSteps([msg.step]);
+          sendResponse({ ok: true });
+          break;
+        case 'PLAY_SUITE':
+          await playSuite(msg.scenarios, msg.continueOnFailure);
           sendResponse({ ok: true });
           break;
         default:
