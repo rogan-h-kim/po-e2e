@@ -5,9 +5,9 @@ import { SEED_VERSION, SEED_SCENARIOS } from './seed';
 // ---------------------------------------------------------------------------
 // Local store (chrome.storage.local). Two kinds of scenario live here:
 //
-//  • Drafts — this browser's own scenarios. Anyone can create and edit them;
+//  • Drafts - this browser's own scenarios. Anyone can create and edit them;
 //    they never leave the browser unless exported. Fully offline.
-//  • Team — a mirror of the published team set from Supabase, grouped into
+//  • Team - a mirror of the published team set from Supabase, grouped into
 //    suites. Runners only read it (it is replaced on refresh); publishers edit
 //    it locally and publish changed scenarios as a new release of their suite.
 //    `snapshot` is the last state we received from / published to the server,

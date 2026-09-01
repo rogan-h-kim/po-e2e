@@ -13,7 +13,7 @@ import type { KeyName, Selector, Step, StepResult, TextMatch } from '../shared/t
 // Background service worker.
 //  - Routes side-panel commands to the active tab's content script.
 //  - Owns the CDP (chrome.debugger) connection and dispatches *trusted* input
-//    events for replay — this is what gives high-accuracy reproduction.
+//    events for replay - this is what gives high-accuracy reproduction.
 // ---------------------------------------------------------------------------
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -32,7 +32,7 @@ function toContent<T>(tabId: number, req: ContentRequest): Promise<T> {
 
 /**
  * Make sure the content script is alive in the tab. If the tab was open before
- * the extension loaded/reloaded, the declared content script never ran — so we
+ * the extension loaded/reloaded, the declared content script never ran - so we
  * ping it and inject on demand. This is the usual cause of "recording saves
  * nothing".
  */
@@ -58,7 +58,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /**
  * Sleep without letting the service worker die. MV3 shuts the worker down after
  * ~30s with no extension API activity, and a bare setTimeout doesn't count as
- * activity — so a long `wait` step would silently kill the replay. Sleeping in
+ * activity - so a long `wait` step would silently kill the replay. Sleeping in
  * short chunks and touching a cheap extension API between them resets the timer.
  */
 const KEEPALIVE_CHUNK_MS = 5000;
@@ -124,7 +124,7 @@ const isMac: Promise<boolean> = chrome.runtime
 
 /**
  * Select-all in the focused field so insertText replaces instead of appends.
- * Windows/Linux: Ctrl+A. macOS: ⌘A — and because synthetic CDP key events skip
+ * Windows/Linux: Ctrl+A. macOS: ⌘A - and because synthetic CDP key events skip
  * the OS's key→editing-command mapping, the 'selectAll' editing command must
  * be attached explicitly (this is what Playwright does on Mac too). Without it,
  * Ctrl+A on a Mac just moves the caret to the line start and the typed value
@@ -152,7 +152,7 @@ async function trustedType(tabId: number, x: number, y: number, text: string) {
 }
 
 /** CDP key descriptors. Keys that produce text (Enter → "\r") must be sent as
- *  `keyDown` with `text`, otherwise as `rawKeyDown` — same rule Playwright uses. */
+ *  `keyDown` with `text`, otherwise as `rawKeyDown` - same rule Playwright uses. */
 const KEY_CODES: Record<KeyName, { code: string; vk: number; text?: string }> = {
   Enter: { code: 'Enter', vk: 13, text: '\r' },
   Escape: { code: 'Escape', vk: 27 },
@@ -178,7 +178,7 @@ async function trustedKey(tabId: number, key: KeyName) {
 // ---- Navigation --------------------------------------------------------------
 const NAV_TIMEOUT_MS = 15000;
 
-/** Resolve once the tab reports `status: 'complete'`, or after the timeout —
+/** Resolve once the tab reports `status: 'complete'`, or after the timeout -
  *  the next step's askContent() retry covers a page that is still settling. */
 function waitForTabLoad(tabId: number): Promise<void> {
   return new Promise((resolve) => {
@@ -235,7 +235,7 @@ async function pollUntil<T>(attempt: () => Promise<T>, accept: (res: T) => boole
  *
  * Why retry: a click can navigate the tab. The old page's content script dies
  * with the page, and the new page's one only appears once the document is
- * idle — so a fixed settle delay would race the page load and the next step
+ * idle - so a fixed settle delay would race the page load and the next step
  * would fail with "Receiving end does not exist". Re-running ensureContent()
  * on every attempt covers full navigations; retrying on a "not found" answer
  * covers SPA routing and late-rendered elements.
@@ -345,7 +345,7 @@ async function runStep(tabId: number, step: Step): Promise<StepResult> {
 /**
  * Tabs with a replay in flight. Two concurrent loops on one tab would interleave
  * their input events and the first to finish would detach the debugger from
- * under the other — so a second PLAY/PLAY_STEP/PLAY_SUITE for a busy tab is refused.
+ * under the other - so a second PLAY/PLAY_STEP/PLAY_SUITE for a busy tab is refused.
  */
 const playingTabs = new Set<number>();
 
@@ -393,7 +393,7 @@ const playSteps = (steps: Step[], continueOnFailure = false, scenarioId?: string
   withReplayTab((tabId) => runScenario(tabId, steps, continueOnFailure, scenarioId).then(() => {}));
 
 /** A whole suite: every scenario in order on one debugger session. A failed
- *  scenario never stops the next one — that is what a regression run is for. */
+ *  scenario never stops the next one - that is what a regression run is for. */
 const playSuite = (items: SuiteItem[], continueOnFailure = false) =>
   withReplayTab(async (tabId) => {
     let passed = 0;

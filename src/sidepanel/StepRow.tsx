@@ -6,7 +6,7 @@ interface Props {
   step: Step;
   result?: StepResult;
   running: boolean;
-  /** A replay is in flight — single-step play is disabled meanwhile. */
+  /** A replay is in flight - single-step play is disabled meanwhile. */
   busy: boolean;
   /** Read-only: no menu actions that change the step. */
   readOnly: boolean;

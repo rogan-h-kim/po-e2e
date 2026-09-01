@@ -25,13 +25,13 @@ import {
 
 // ---------------------------------------------------------------------------
 // Team scenario set: the local mirror of what is published (all suites), the
-// publisher session, and the operations on it — refresh (server →
+// publisher session, and the operations on it - refresh (server →
 // local, re-applying my unpublished changes), publish (local → server as a
 // new release of one suite), and suite management.
 // ---------------------------------------------------------------------------
 
 export interface Team {
-  /** False for a build without Supabase settings — the team section is hidden. */
+  /** False for a build without Supabase settings - the team section is hidden. */
   enabled: boolean;
   loaded: boolean;
   email: string | null;
@@ -138,7 +138,7 @@ export function useTeam(): Team {
           setEmail(e);
           if (e) setIsPublisher(await checkPublisher(e));
         } catch {
-          /* no session — runner */
+          /* no session - runner */
         }
       }
       setLoaded(true);
@@ -181,7 +181,7 @@ export function useTeam(): Team {
       for (const c of conflicts) {
         const name = (c.mine ?? c.theirs)!.name;
         const what = !c.mine ? '내가 삭제했는데 다른 게시자가 고쳤어요' : !c.theirs ? '내가 고쳤는데 다른 게시자가 삭제했어요' : '나도 고쳤고 다른 게시자도 고쳤어요';
-        const keepMine = confirm(`"${name}" — ${what}.\n\n확인: 내 것 유지\n취소: 서버 것으로`);
+        const keepMine = confirm(`"${name}" - ${what}.\n\n확인: 내 것 유지\n취소: 서버 것으로`);
         if (keepMine) kept++;
         result = resolveConflict(result, c, keepMine);
       }

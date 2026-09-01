@@ -21,7 +21,7 @@ import type { Scenario } from './types';
 export const SEED_VERSION = 0;
 
 export const SEED_SCENARIOS: Scenario[] = [
-  // Example — replace with your own exported scenarios and bump SEED_VERSION:
+  // Example - replace with your own exported scenarios and bump SEED_VERSION:
   //
   // {
   //   id: 'fixed-login-flow',           // keep this id stable across builds

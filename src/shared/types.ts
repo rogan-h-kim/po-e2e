@@ -45,7 +45,7 @@ interface StepBase {
 }
 
 /** Load a URL in the tab and wait for the page to finish loading. Usually the
- *  first step of a scenario — it makes the scenario reproducible from anywhere. */
+ *  first step of a scenario - it makes the scenario reproducible from anywhere. */
 export interface NavigateStep extends StepBase {
   type: 'navigate';
   url: string;
@@ -87,7 +87,7 @@ export interface AssertVisibleStep extends StepBase {
   selector: Selector;
 }
 
-/** Assert that a region contains some (non-empty) visible text — the content
+/** Assert that a region contains some (non-empty) visible text - the content
  *  doesn't matter, only that *something* appeared there. */
 export interface AssertHasTextStep extends StepBase {
   type: 'assertHasText';
@@ -129,7 +129,7 @@ export type Step =
   | AssertValueStep
   | AssertUrlStep;
 
-/** A step without its id/description — what recording and the side panel build before makeStep() fills them in.
+/** A step without its id/description - what recording and the side panel build before makeStep() fills them in.
  *  Distributes over the union so each variant keeps its own fields (plain Omit<Step, …> would not). */
 export type StepDraft = Step extends infer S ? (S extends Step ? Omit<S, 'id' | 'description'> : never) : never;
 

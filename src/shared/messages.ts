@@ -67,7 +67,7 @@ export const RUNTIME = {
   /** Broadcast an event to all extension pages (side panel included). */
   emit(event: Event) {
     chrome.runtime.sendMessage(event).catch(() => {
-      /* no listener (side panel closed) — ignore */
+      /* no listener (side panel closed) - ignore */
     });
   },
 };

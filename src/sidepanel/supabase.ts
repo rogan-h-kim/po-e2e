@@ -2,7 +2,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { DEFAULT_SUITE_ID, type Release, type Scenario, type Step, type Suite } from '../shared/types';
 
 // ---------------------------------------------------------------------------
-// Supabase-backed team sharing — publisher / runner model.
+// Supabase-backed team sharing - publisher / runner model.
 //
 //  • Everyone with the build can READ the published suites (anon key).
 //  • Only signed-in publishers can WRITE; that is enforced by the tables' RLS

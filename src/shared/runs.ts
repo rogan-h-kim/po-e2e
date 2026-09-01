@@ -3,7 +3,7 @@ import type { RunRecord } from './types';
 // ---------------------------------------------------------------------------
 // Run history: every full replay is recorded locally (chrome.storage.local),
 // capped per scenario so failure screenshots don't eat the storage quota.
-// Not synced — a run is a fact about *this* browser at *that* time.
+// Not synced - a run is a fact about *this* browser at *that* time.
 // ---------------------------------------------------------------------------
 
 const K_RUNS = 'po-cake:runs';

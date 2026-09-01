@@ -12,7 +12,7 @@ import { generateSelector, resolveTarget, findElement } from './selector';
 
 // ---------------------------------------------------------------------------
 // Content script: runs in the page. Responsible for the "easy" accuracy-neutral
-// work — highlighting, selecting, recording, and locating elements. It never
+// work - highlighting, selecting, recording, and locating elements. It never
 // dispatches the real replay events itself (that's the background via CDP, for
 // trusted events); it only reports coordinates. The one exception is <select>,
 // which has no reliable trusted-input path, so it is set directly in the DOM.
@@ -80,7 +80,7 @@ function hideHighlight() {
 /**
  * True once the extension has been reloaded/updated underneath this page. The
  * old script instance stays alive in the tab, but every chrome.* call from it
- * throws "Extension context invalidated" — so we go quiet instead of spamming
+ * throws "Extension context invalidated" - so we go quiet instead of spamming
  * the extension's error list. A page reload (F5) brings in the fresh script.
  */
 const contextGone = () => !chrome.runtime?.id;
@@ -193,7 +193,7 @@ function onRecordKeydown(e: KeyboardEvent) {
   // Korean/Japanese IME: Enter while composing only commits the composition.
   if (e.isComposing || e.keyCode === 229) return;
   // Enter in a text field submits before the field's change event would have
-  // fired, so flush the typed value first — otherwise the key replays before the text.
+  // fired, so flush the typed value first - otherwise the key replays before the text.
   const target = e.target as Element;
   if (target && isTextField(target)) recordInputIfChanged(target);
   record({ type: 'key', key: e.key as KeyName });
@@ -273,7 +273,7 @@ function assertVisible(selector: Selector): AssertResponse {
   return { ok: true, pass: isVisible(el) };
 }
 
-/** Pass if the region is visible AND holds some non-whitespace text — used to
+/** Pass if the region is visible AND holds some non-whitespace text - used to
  *  check "something (anything) appeared here", regardless of the exact text. */
 function assertHasText(selector: Selector): AssertResponse {
   const el = findElement(selector);
