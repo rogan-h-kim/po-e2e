@@ -36,15 +36,15 @@ export function defaultDescription(step: Step): string {
     case 'wait':
       return `${step.ms}ms 대기`;
     case 'assertVisible':
-      return `${describeSelector(step.selector)} 보임 검증`;
+      return `${describeSelector(step.selector)} 보임 확인`;
     case 'assertHasText':
-      return `${describeSelector(step.selector)}에 텍스트 나타남 검증`;
+      return `${describeSelector(step.selector)}에 텍스트 나타남 확인`;
     case 'assertText':
-      return `${describeSelector(step.selector)}에 "${step.text}" ${matchLabel(step.match)} 검증`;
+      return `${describeSelector(step.selector)}에 "${step.text}" ${matchLabel(step.match)} 확인`;
     case 'assertValue':
-      return `${describeSelector(step.selector)} 값이 "${step.value}"인지 검증`;
+      return `${describeSelector(step.selector)} 값이 "${step.value}"인지 확인`;
     case 'assertUrl':
-      return `URL에 "${step.url}" ${matchLabel(step.match)} 검증`;
+      return `URL에 "${step.url}" ${matchLabel(step.match)} 확인`;
   }
 }
 

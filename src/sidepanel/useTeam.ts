@@ -180,7 +180,7 @@ export function useTeam(): Team {
       let kept = 0;
       for (const c of conflicts) {
         const name = (c.mine ?? c.theirs)!.name;
-        const what = !c.mine ? '내가 삭제했는데 다른 게시자가 고쳤어요' : !c.theirs ? '내가 고쳤는데 다른 게시자가 삭제했어요' : '나도 고쳤고 다른 게시자도 고쳤어요';
+        const what = !c.mine ? '내가 삭제했는데 다른 사람이 고쳤어요' : !c.theirs ? '내가 고쳤는데 다른 사람이 삭제했어요' : '나도 고쳤고 다른 사람도 고쳤어요';
         const keepMine = confirm(`"${name}" - ${what}.\n\n확인: 내 것 유지\n취소: 서버 것으로`);
         if (keepMine) kept++;
         result = resolveConflict(result, c, keepMine);
@@ -232,16 +232,16 @@ export function useTeam(): Team {
         const upserts = t.filter((s) => upsertIds.has(s.id));
         const removed = pick(ch.deleted);
         if (!upserts.length && !removed.length) {
-          setStatus('게시할 변경이 없어요.');
+          setStatus('공유할 변경이 없어요.');
           return;
         }
         const r = await publishSuite(activeSuiteId, upserts, removed, email);
         const removedSet = new Set(removed);
         setSnapshot([...sn.filter((s) => !removedSet.has(s.id) && !upsertIds.has(s.id)), ...upserts]);
         setReleases((prev) => ({ ...prev, [activeSuiteId]: r }));
-        setStatus(`${r.version}번째 게시 완료 · 변경 ${upserts.length + removed.length}개`);
+        setStatus(`${r.version}번째 공유 완료 · 변경 ${upserts.length + removed.length}개`);
       } catch (e) {
-        setStatus(`게시 실패: ${(e as Error).message}`);
+        setStatus(`공유 실패: ${(e as Error).message}`);
       } finally {
         setBusy(false);
       }
@@ -333,7 +333,7 @@ export function useTeam(): Team {
       }));
       setTeam((prev) => [...prev, ...copies]);
       setActiveSuiteId(s.id);
-      setStatus(`버전 "${name}" 생성 · 시나리오 ${copies.length}개 복사됨 (게시 전)`);
+      setStatus(`버전 "${name}" 생성 · 시나리오 ${copies.length}개 복사됨 (공유 전)`);
     },
     [activeSuite, isPublisher, suiteScenarios, folders, writeSuite],
   );
@@ -344,7 +344,7 @@ export function useTeam(): Team {
     setEmail(e);
     const pub = await checkPublisher(e);
     setIsPublisher(pub);
-    if (!pub) throw new Error('로그인은 됐지만 게시 권한이 없어요. publishers 테이블에 이 이메일을 추가하세요.');
+    if (!pub) throw new Error('로그인은 됐지만 공유 권한이 없어요. publishers 테이블에 이 이메일을 추가하세요.');
   }, []);
   const signOut = useCallback(async () => {
     await sbSignOut();

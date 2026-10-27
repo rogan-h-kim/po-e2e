@@ -8,7 +8,7 @@ interface Item extends Pick<Scenario, 'id' | 'name' | 'folder'> {
   kind: Kind;
 }
 const KIND: Record<Kind, { label: string; cls: string }> = {
-  published: { label: '게시됨', cls: 'ok' },
+  published: { label: '공유됨', cls: 'ok' },
   added: { label: '새 항목', cls: 'ok' },
   changed: { label: '변경됨', cls: 'warn' },
   deleted: { label: '삭제됨', cls: 'bad' },
@@ -86,7 +86,7 @@ export function PublishTab({ team, onOpen }: { team: Team; onOpen: (id: string) 
       team.archiveSuite(next);
   };
   const discard = () => {
-    if (confirm(`게시 안 된 변경 ${totalPending}개를 모두 버리고 서버 내용으로 되돌릴까요?`)) team.refresh(true);
+    if (confirm(`공유 안 된 변경 ${totalPending}개를 모두 버리고 서버 내용으로 되돌릴까요?`)) team.refresh(true);
   };
 
   return (
@@ -95,12 +95,12 @@ export function PublishTab({ team, onOpen }: { team: Team; onOpen: (id: string) 
         <div className="block-head">
           <h3>
             {activeSuite?.name ?? '—'}
-            <span className="muted"> · 게시 안 된 변경 {pendingCount}개</span>
+            <span className="muted"> · 공유 안 된 변경 {pendingCount}개</span>
           </h3>
         </div>
 
         {groups.length === 0 ? (
-          <p className="hint">이 버전에는 아직 시나리오가 없어요. 시나리오 탭에서 초안을 만들어 승격하세요.</p>
+          <p className="hint">이 버전에는 아직 시나리오가 없어요. 시나리오 탭에서 시나리오를 만든 뒤 팀 시나리오로 옮기세요.</p>
         ) : (
           groups.map((g) => (
             <section key={g.folder || '__loose'} className="folder">
@@ -148,13 +148,13 @@ export function PublishTab({ team, onOpen }: { team: Team; onOpen: (id: string) 
                 해제
               </button>
               <button className="btn primary" disabled={busy} onClick={publishPicked}>
-                선택 게시
+                선택 공유
               </button>
             </>
           ) : (
             <>
               <span className="muted select-hint">
-                {pendingCount > 0 ? '변경된 항목을 체크해 일부만 게시할 수 있어요' : '모두 게시된 상태예요'}
+                {pendingCount > 0 ? '변경된 항목을 체크해 일부만 공유할 수 있어요' : '모두 공유된 상태예요'}
               </span>
               {totalPending > 0 && (
                 <button className="btn sm ghost danger" disabled={busy} onClick={discard} title="내 변경을 모두 버리고 서버 상태로">
@@ -162,19 +162,19 @@ export function PublishTab({ team, onOpen }: { team: Team; onOpen: (id: string) 
                 </button>
               )}
               <button className="btn primary" disabled={busy || pendingCount === 0} onClick={() => team.publish()}>
-                모두 게시
+                모두 공유
               </button>
             </>
           )}
         </div>
         <p className="hint">
-          게시하면 팀원이 다음에 패널을 열 때 받아요. 게시 전에 서버 최신본을 먼저 받아 내가 바꾼 시나리오만 그 위에 얹으므로 다른
-          게시자의 작업을 덮어쓰지 않습니다.
+          공유하면 팀원이 다음에 패널을 열 때 받아요. 공유 전에 서버 최신본을 먼저 받아 내가 바꾼 시나리오만 그 위에 얹으므로 다른
+          사람의 작업을 덮어쓰지 않습니다.
         </p>
       </section>
 
       <section className="block">
-        <h3>제품 버전</h3>
+        <h3>버전</h3>
         <div className="block-actions">
           <button className="btn sm" onClick={createSuite}>
             ＋ 새 버전
@@ -190,7 +190,7 @@ export function PublishTab({ team, onOpen }: { team: Team; onOpen: (id: string) 
           </button>
         </div>
         <p className="hint">
-          제품 버전별 시나리오 세트예요 (예: v2.3, v2.4). 새 버전 테스트를 시작할 땐 "복사해서 새 버전"으로 폴더·시나리오를
+          버전은 시나리오 묶음이에요 (예: v2.3, v2.4). 새 버전 테스트를 시작할 땐 "복사해서 새 버전"으로 폴더·시나리오를
           통째로 가져온 뒤 달라진 것만 고치세요. 폴더는 시나리오 탭에서 만듭니다.
         </p>
       </section>

@@ -377,7 +377,7 @@ export default function App() {
     if (!active || !canEdit) return;
     const warn = activeIsDraft
       ? `"${active.name}"을(를) 삭제할까요?`
-      : `팀 시나리오 "${active.name}"을(를) 삭제할까요?\n\n로컬에서 먼저 지워지고, 다음 게시 때 팀 전체에서 사라집니다.`;
+      : `팀 시나리오 "${active.name}"을(를) 삭제할까요?\n\n로컬에서 먼저 지워지고, 다음 공유 때 팀 전체에서 사라집니다.`;
     if (!confirm(warn)) return;
     const id = active.id;
     clearRuns(id);
@@ -446,7 +446,7 @@ export default function App() {
     if (res && res.ok === false) {
       setRecording(false);
       alert(
-        `녹화를 시작할 수 없어요.\n${res.error ?? ""}\n\n대상 탭을 새로고침(F5) 후 다시 시도하세요.`,
+        `화면에서 만들기를 시작할 수 없어요.\n${res.error ?? ""}\n\n대상 탭을 새로고침(F5) 후 다시 시도하세요.`,
       );
       return;
     }
@@ -514,7 +514,7 @@ export default function App() {
       steps: sc.steps,
       continueOnFailure,
       scenarioId: id,
-    }).then((res) => startFailed(res, "재생"));
+    }).then((res) => startFailed(res, "실행"));
   };
   const playOne = async (step: Step) => {
     const res = await send({ type: "PLAY_STEP", step });
@@ -547,7 +547,7 @@ export default function App() {
       type: "PLAY_SUITE",
       scenarios: list.map((s) => ({ id: s.id, steps: s.steps })),
       continueOnFailure,
-    }).then((res) => startFailed(res, "전체 재생"));
+    }).then((res) => startFailed(res, "전체 실행"));
   };
   const changeContinueOnFailure = (on: boolean) => {
     setContinueOnFailure(on);
@@ -611,7 +611,7 @@ export default function App() {
       ? [
           {
             id: "publish" as Tab,
-            label: team.pendingCount ? `게시 ${team.pendingCount}` : "게시",
+            label: team.pendingCount ? `공유 ${team.pendingCount}` : "공유",
           },
         ]
       : []),
@@ -645,7 +645,7 @@ export default function App() {
     <div className="app">
       <header className="top">
         <h1>Po-Cake</h1>
-        {playing && <span className="playing-pill">재생 중</span>}
+        {playing && <span className="playing-pill">실행 중</span>}
       </header>
 
       {team.enabled && <SuiteHeader team={team} />}
@@ -697,7 +697,7 @@ export default function App() {
               </button>
               <span className={`chip ${activeIsDraft ? "muted" : ""}`}>
                 {activeIsDraft
-                  ? "내 초안"
+                  ? "내 시나리오"
                   : (active.folder ?? team.activeSuite?.name ?? "팀")}
               </span>
               {renaming !== null ? (
@@ -729,14 +729,14 @@ export default function App() {
                     onClick: () => setRenaming(active.name),
                     hidden: !canEdit,
                   },
-                  { label: "초안으로 복제", onClick: duplicateScenario },
+                  { label: "내 시나리오로 복제", onClick: duplicateScenario },
                   {
-                    label: "팀 시나리오로 승격",
+                    label: "팀 시나리오로 옮기기",
                     onClick: promoteDraft,
                     hidden: !(team.isPublisher && activeIsDraft),
                   },
                   {
-                    label: "이 시나리오만 게시",
+                    label: "이 시나리오만 공유",
                     onClick: () => team.publish([active.id]),
                     hidden: !(
                       team.isPublisher &&
@@ -760,7 +760,7 @@ export default function App() {
               (team.isPublisher && !activeIsDraft) ||
               !canEdit) && (
               <div className="edit-meta">
-                {activeChanged && <span className="chip warn">게시 안 됨</span>}
+                {activeChanged && <span className="chip warn">공유 안 됨</span>}
                 {team.isPublisher && !activeIsDraft && (
                   <label>
                     폴더{" "}
@@ -779,7 +779,7 @@ export default function App() {
                 )}
                 {!canEdit && (
                   <span>
-                    읽기 전용 - 고치려면 ⋯ 메뉴에서 초안으로 복제하세요
+                    읽기 전용 - 고치려면 ⋯ 메뉴에서 내 시나리오로 복제하세요
                   </span>
                 )}
               </div>
@@ -788,7 +788,7 @@ export default function App() {
             {recording && (
               <div className="recording-bar">
                 <span className="dot" />
-                녹화 중 - 페이지에서 클릭·입력하면 단계가 쌓여요
+                화면에서 만드는 중 - 페이지에서 클릭·입력하면 단계가 쌓여요
                 <button
                   className="btn sm"
                   style={{ marginLeft: "auto" }}
@@ -799,11 +799,11 @@ export default function App() {
               </div>
             )}
 
-            <div className="section-label">재생 목록</div>
+            <div className="section-label">단계</div>
             {steps.length === 0 && !form ? (
               <p className="empty">
                 {canEdit
-                  ? "아직 단계가 없어요. 아래에서 녹화하거나 단계를 추가하세요."
+                  ? "아직 단계가 없어요. 아래에서 화면에서 만들기를 누르거나 단계를 추가하세요."
                   : "이 시나리오에는 단계가 없어요."}
               </p>
             ) : null}
@@ -859,14 +859,14 @@ export default function App() {
               onClear={clearRunHistory}
             />
 
-            <div className="section-label">재생 설정</div>
+            <div className="section-label">실행 설정</div>
             <label className="switch">
               <input
                 type="checkbox"
                 checked={continueOnFailure}
                 onChange={(e) => changeContinueOnFailure(e.target.checked)}
               />
-              실패해도 계속 재생
+              실패해도 계속 실행
             </label>
           </div>
         )}
@@ -895,7 +895,7 @@ export default function App() {
               disabled={playing || recording}
               onClick={() => openAdd(steps.length)}
             >
-              ＋ 단계추가
+              ＋ 단계 추가
             </button>
           )}
           {canEdit && (
@@ -904,7 +904,7 @@ export default function App() {
               disabled={playing}
               onClick={toggleRecord}
             >
-              {recording ? "■ 녹화중지" : "● 녹화하기"}
+              {recording ? "■ 만들기 중지" : "● 화면에서 만들기"}
             </button>
           )}
           <button
@@ -912,7 +912,7 @@ export default function App() {
             disabled={!steps.length || playing || recording}
             onClick={() => runScenario(active.id)}
           >
-            ▶ 전체 재생
+            ▶ 전체 실행
           </button>
           {team.isPublisher && !activeIsDraft && activeChanged && (
             <button
@@ -920,7 +920,7 @@ export default function App() {
               disabled={team.busy || playing}
               onClick={() => team.publish([active.id])}
             >
-              게시
+              공유
             </button>
           )}
         </footer>

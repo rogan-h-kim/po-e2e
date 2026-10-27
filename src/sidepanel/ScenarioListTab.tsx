@@ -88,7 +88,7 @@ export function ScenarioListTab({
   };
   const removeFolder = (name: string, count: number) => {
     const msg = count
-      ? `폴더 "${name}"을(를) 지울까요? 안의 시나리오 ${count}개는 '미분류'로 이동합니다 (게시 전까지는 로컬).`
+      ? `폴더 "${name}"을(를) 지울까요? 안의 시나리오 ${count}개는 '미분류'로 이동합니다 (공유 전까지는 내 브라우저에만).`
       : `빈 폴더 "${name}"을(를) 지울까요?`;
     if (confirm(msg)) team.removeFolder(name);
   };
@@ -198,7 +198,7 @@ export function ScenarioListTab({
           {groups.length === 0 && (
             <p className="empty">
               아직 시나리오가 없어요.
-              {team.isPublisher ? ' 초안을 만들어 승격하거나, 폴더를 먼저 만드세요.' : ' 게시자가 게시하면 여기에 나타나요.'}
+              {team.isPublisher ? ' 시나리오를 만들어 팀 시나리오로 옮기거나, 폴더를 먼저 만드세요.' : ' 공유 권한이 있는 사람이 공유하면 여기에 나타나요.'}
             </p>
           )}
 
@@ -213,7 +213,7 @@ export function ScenarioListTab({
                     label={`${g.label} 메뉴`}
                     items={[
                       {
-                        label: '이 폴더 전체 재생',
+                        label: '이 폴더 전체 실행',
                         onClick: () => onRunMany(runnableIds(g.items), g.label),
                         disabled: playing || runnableIds(g.items).length === 0,
                       },
@@ -241,12 +241,12 @@ export function ScenarioListTab({
 
       <section className="folder">
         {renderFolderHead({
-          name: '내 초안',
+          name: '내 시나리오',
           list: drafts,
           foldKey: '__drafts',
           extra: (
             <button className="btn sm ghost" onClick={onCreateDraft}>
-              ＋ 새 초안
+              ＋ 시나리오 만들기
             </button>
           ),
         })}
@@ -255,7 +255,7 @@ export function ScenarioListTab({
             {drafts.map((s) => renderRow(s, true))}
             {drafts.length === 0 && (
               <li className="muted sc-empty">
-                {team.enabled ? '팀 시나리오를 복제하거나 새로 만들면 여기 쌓여요.' : '＋ 새 초안으로 시작하세요.'}
+                {team.enabled ? '팀 시나리오를 복제하거나 새로 만들면 여기 쌓여요.' : '＋ 시나리오 만들기로 시작하세요.'}
               </li>
             )}
           </ul>
@@ -274,12 +274,12 @@ export function ScenarioListTab({
               disabled={playing}
               onClick={() => onRunMany(selectedRunnable, `선택 ${selectedRunnable.length}개`)}
             >
-              ▶ 선택 재생
+              ▶ 선택 실행
             </button>
           </>
         ) : (
           <>
-            <span className="muted select-hint">체크해서 원하는 것만 재생할 수 있어요</span>
+            <span className="muted select-hint">체크해서 원하는 것만 실행할 수 있어요</span>
             <button className="btn sm ghost" disabled={allRunnable.length === 0} onClick={() => setMany(allRunnable, true)}>
               모두 선택
             </button>
@@ -288,7 +288,7 @@ export function ScenarioListTab({
               disabled={playing || runnableIds(team.suiteScenarios).length === 0}
               onClick={() => onRunMany(runnableIds(team.suiteScenarios), team.activeSuite?.name ?? '전체')}
             >
-              ▶ 전체 재생
+              ▶ 전체 실행
             </button>
           </>
         )}

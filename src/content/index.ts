@@ -200,7 +200,7 @@ function onRecordKeydown(e: KeyboardEvent) {
 }
 
 function flashRecorded(el: Element) {
-  showHighlight(el, '● 녹화됨', '#10b981');
+  showHighlight(el, '● 단계 추가됨', '#10b981');
   setTimeout(hideHighlight, 400);
 }
 

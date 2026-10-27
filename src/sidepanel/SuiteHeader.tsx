@@ -12,7 +12,7 @@ export function SuiteHeader({ team }: { team: Team }) {
   const refresh = () => {
     if (totalPending > 0) {
       const ok = confirm(
-        `게시 안 된 변경 ${totalPending}개가 있어요.\n\n확인: 서버 내용을 받되 내 변경은 그 위에 유지\n취소: 아무것도 하지 않음`,
+        `공유 안 된 변경 ${totalPending}개가 있어요.\n\n확인: 서버 내용을 받되 내 변경은 그 위에 유지\n취소: 아무것도 하지 않음`,
       );
       if (!ok) return;
     }
@@ -26,7 +26,7 @@ export function SuiteHeader({ team }: { team: Team }) {
           value={team.activeSuiteId}
           onChange={(e) => team.setActiveSuite(e.target.value)}
           disabled={suites.length === 0}
-          title="제품 버전 (버전별 시나리오 세트)"
+          title="버전 (시나리오 묶음)"
         >
           {suites.length === 0 && <option value={team.activeSuiteId}>버전 없음</option>}
           {live.length > 0 && (
@@ -48,8 +48,8 @@ export function SuiteHeader({ team }: { team: Team }) {
             </optgroup>
           )}
         </select>
-        <span className="suite-version" title={release ? `게시: ${release.publishedBy ?? ''}` : ''}>
-          {release ? `${release.version}번째 게시 · ${fmtTime(release.publishedAt)}` : '게시 없음'}
+        <span className="suite-version" title={release ? `공유: ${release.publishedBy ?? ''}` : ''}>
+          {release ? `${release.version}번째 공유 · ${fmtTime(release.publishedAt)}` : '공유 없음'}
         </span>
         <button className="icon-btn" title="서버에서 다시 받기" disabled={busy} onClick={refresh}>
           {busy ? '…' : '↻'}

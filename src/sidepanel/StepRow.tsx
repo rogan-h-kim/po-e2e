@@ -61,7 +61,7 @@ export function StepRow({
           ? fmtDuration(result.durationMs)
           : '성공'
         : '실패'
-      : '재생 안 됨';
+      : '실행 안 됨';
   const warning = 'selector' in step ? step.selector.warning : undefined;
   const item = (label: string, fn: () => void, opts: { danger?: boolean; disabled?: boolean } = {}) => (
     <button

@@ -19,11 +19,29 @@ There are no tests configured. To test manually: `npm run build`, then load `dis
 
 The manifest is generated from `manifest.config.ts` by `@crxjs/vite-plugin` - edit that file, not a manifest.json.
 
+## UI terminology (Korean)
+
+Every user-visible string uses exactly these words - one word per concept, never a synonym. Code identifiers (`draft`, `publish`, `promote`, `record`, `play`, `publishers` table) keep their English names; only the Korean UI text changed.
+
+| Concept | UI word | Do not use |
+|---|---|---|
+| a test (list of steps) | 시나리오 | - |
+| one line of a scenario | 단계 | 재생 목록 |
+| run a scenario / step | 실행 (전체 실행 · 선택 실행 · 이 단계만 실행) | 재생, 플레이 |
+| recording: click the page to add steps | 화면에서 만들기 / 만들기 중지 | 녹화 |
+| scenario only in this browser (`draft`) | 내 시나리오 | 초안 |
+| scenario in the team suite | 팀 시나리오 | 게시됨 |
+| move a draft into the team suite (`promote`) | 팀 시나리오로 옮기기 | 승격 |
+| push pending team changes to Supabase (`publish`) | 공유 (선택 공유 · 모두 공유 · 공유 안 됨) | 게시 |
+| someone in the `publishers` table | 공유 권한 (있음/없음) | 게시자 |
+| a suite (`Suite`) | 버전 | 제품 버전, 스위트, 세트 |
+| an assertion step | 확인 | 검증 |
+
 ## Architecture
 
 Three extension contexts communicate via typed messages defined in `src/shared/messages.ts` (the single source of truth for the protocol):
 
-- **Side panel** (`src/sidepanel/`, React; light Toss-style UI, tokens at the top of `styles.css`): tabs in `App.tsx` - 시나리오 (`ScenarioListTab`: suite scenarios grouped by folder + drafts, run one/folder/all; opening a scenario switches the tab's `view` to a detail screen rendered inline in App - steps, form, run history - with ← back), 게시 (`PublishTab`, publishers only: pending changes, suite management), 설정 (`SettingsTab`: account, replay option, import/export). Runners see two tabs, publishers three; tab labels never change. `SuiteHeader` (suite picker + ↻) sits above the tabs; `useTeam.ts` owns team state. Steps are added/edited through one form, `StepForm.tsx` ("무엇을?" type picker → per-type fields → "화면에서 선택" starts the inspector and the picked selector flows back in via the `picked` prop) - never through `prompt()`. Row actions live in a `MoreMenu` (⋯). The edit tab has a fixed bottom bar (＋ 단계추가 · ● 녹화하기 · ▶ 전체 재생 · 게시). Sends `Command`s to the background; receives broadcast `Event`s via `chrome.runtime.onMessage`.
+- **Side panel** (`src/sidepanel/`, React; light Toss-style UI, tokens at the top of `styles.css`): tabs in `App.tsx` - 시나리오 (`ScenarioListTab`: suite scenarios grouped by folder + drafts, run one/folder/all; opening a scenario switches the tab's `view` to a detail screen rendered inline in App - steps, form, run history - with ← back), 공유 (`PublishTab`, publishers only: pending changes, suite management), 설정 (`SettingsTab`: account, replay option, import/export). Runners see two tabs, publishers three; tab labels never change. `SuiteHeader` (suite picker + ↻) sits above the tabs; `useTeam.ts` owns team state. Steps are added/edited through one form, `StepForm.tsx` ("무엇을?" type picker → per-type fields → "화면에서 선택" starts the inspector and the picked selector flows back in via the `picked` prop) - never through `prompt()`. Row actions live in a `MoreMenu` (⋯). The edit tab has a fixed bottom bar (＋ 단계 추가 · ● 화면에서 만들기 · ▶ 전체 실행 · 공유). Sends `Command`s to the background; receives broadcast `Event`s via `chrome.runtime.onMessage`.
 - **Content script** (`src/content/`): element picking/highlighting, selector generation, recording listeners, and locating elements (returns viewport x/y coordinates). Receives `ContentRequest`s (request/response via `chrome.tabs.sendMessage`).
 - **Background service worker** (`src/background/index.ts`): routes side-panel commands to the active tab, owns the CDP connection, and is the replay engine. For click/input steps it asks the content script to `LOCATE` the element, then dispatches trusted mouse/key events at those coordinates via `Input.dispatchMouseEvent` / `Input.insertText`. Every content request during replay goes through `askContent()`, which re-runs `ensureContent()` and retries until the element is found (or `STEP_TIMEOUT_MS` elapses) - this is what lets a step survive the page navigation triggered by the previous step.
 

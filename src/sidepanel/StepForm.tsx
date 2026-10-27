@@ -19,11 +19,11 @@ export const STEP_KINDS: { type: StepType; label: string; needsElement: boolean 
   { type: 'key', label: '키 입력', needsElement: false },
   { type: 'navigate', label: '페이지 이동', needsElement: false },
   { type: 'wait', label: '대기', needsElement: false },
-  { type: 'assertVisible', label: '검증 · 요소가 보임', needsElement: true },
-  { type: 'assertHasText', label: '검증 · 텍스트가 나타남', needsElement: true },
-  { type: 'assertText', label: '검증 · 텍스트 포함/일치', needsElement: true },
-  { type: 'assertValue', label: '검증 · 입력값', needsElement: true },
-  { type: 'assertUrl', label: '검증 · URL', needsElement: false },
+  { type: 'assertVisible', label: '확인 · 요소가 보임', needsElement: true },
+  { type: 'assertHasText', label: '확인 · 텍스트가 나타남', needsElement: true },
+  { type: 'assertText', label: '확인 · 텍스트 포함/일치', needsElement: true },
+  { type: 'assertValue', label: '확인 · 입력값', needsElement: true },
+  { type: 'assertUrl', label: '확인 · URL', needsElement: false },
 ];
 
 export const needsElement = (t: StepType) => STEP_KINDS.find((k) => k.type === t)?.needsElement ?? false;

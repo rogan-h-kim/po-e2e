@@ -352,7 +352,7 @@ const playingTabs = new Set<number>();
 /** Lock the active tab, attach the debugger, run `fn`, and always clean up. */
 async function withReplayTab(fn: (tabId: number) => Promise<void>) {
   const tabId = await activeTabId();
-  if (playingTabs.has(tabId)) throw new Error('이 탭에서 이미 재생 중이에요. 끝날 때까지 기다려 주세요.');
+  if (playingTabs.has(tabId)) throw new Error('이 탭에서 이미 실행 중이에요. 끝날 때까지 기다려 주세요.');
   playingTabs.add(tabId);
   try {
     await ensureContent(tabId);

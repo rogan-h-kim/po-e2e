@@ -31,14 +31,14 @@ export function SettingsTab({
       )}
 
       <section className="block">
-        <h3>재생 설정</h3>
+        <h3>실행 설정</h3>
         <label className="switch">
           <input
             type="checkbox"
             checked={continueOnFailure}
             onChange={(e) => onContinueChange(e.target.checked)}
           />
-          실패해도 계속 재생
+          실패해도 계속 실행
         </label>
         <p className="hint">
           켜면 실패한 단계가 있어도 끝까지 실행해 모든 실패를 한 번에 확인할 수
@@ -68,15 +68,15 @@ export function SettingsTab({
           />
         </div>
         <p className="hint">
-          팀원이 만든 초안을 게시자에게 보내는 통로예요. 불러온 시나리오는 내
-          초안으로 들어갑니다.
+          팀원이 만든 시나리오를 공유 권한이 있는 사람에게 보내는 통로예요. 불러온 시나리오는
+          내 시나리오로 들어갑니다.
         </p>
       </section>
 
       {team.enabled && (
         <section className="block">
           <details className="sql-help">
-            <summary>Supabase 설정 SQL (게시자가 최초 1회)</summary>
+            <summary>Supabase 설정 SQL (관리자가 최초 1회)</summary>
             <pre>{SETUP_SQL}</pre>
           </details>
         </section>
@@ -100,7 +100,7 @@ function Account({ team }: { team: Team }) {
     setMsg("로그인 중…");
     try {
       await team.signIn(mail.trim(), password);
-      setMsg("로그인 성공. 편집·게시 탭이 켜졌어요.");
+      setMsg("로그인 성공. 편집·공유 탭이 켜졌어요.");
       setPassword("");
     } catch (e) {
       setMsg((e as Error).message);
@@ -116,8 +116,8 @@ function Account({ team }: { team: Team }) {
           <b>{team.email}</b>
           <br />
           {team.isPublisher
-            ? "게시 권한 있음 - 팀 시나리오와 버전을 편집하고 게시할 수 있어요."
-            : "게시 권한 없음 - Supabase의 publishers 테이블에 이 이메일을 추가하세요."}
+            ? "공유 권한 있음 - 팀 시나리오와 버전을 편집하고 공유할 수 있어요."
+            : "공유 권한 없음 - Supabase의 publishers 테이블에 이 이메일을 추가하세요."}
         </p>
         <button className="btn sm ghost danger" onClick={() => team.signOut()}>
           로그아웃
@@ -128,7 +128,7 @@ function Account({ team }: { team: Team }) {
   return (
     <div className="login-form">
       <p className="modal-text">
-        실행만 한다면 로그인이 필요 없어요. 팀 시나리오를 만들고 게시하는 사람만
+        실행만 한다면 로그인이 필요 없어요. 팀 시나리오를 만들고 공유하는 사람만
         로그인합니다.
       </p>
       <label>이메일</label>
@@ -150,7 +150,7 @@ function Account({ team }: { team: Team }) {
       {msg && <pre className="modal-msg">{msg}</pre>}
       <div className="block-actions">
         <button className="btn primary sm" disabled={working} onClick={login}>
-          {working ? "확인 중…" : "게시자 로그인"}
+          {working ? "확인 중…" : "공유 권한 로그인"}
         </button>
       </div>
     </div>

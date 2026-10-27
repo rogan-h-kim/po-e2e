@@ -72,7 +72,7 @@ function friendly(message: string): string {
   if (/invalid login credentials/i.test(message)) return '이메일 또는 비밀번호가 맞지 않아요.';
   if (/email not confirmed/i.test(message)) return '아직 확인되지 않은 계정이에요. Supabase 대시보드에서 확인 처리하세요.';
   if (/row-level security|permission denied|42501/i.test(message))
-    return '게시 권한이 없어요. 이 계정의 이메일이 publishers 테이블에 있어야 합니다.';
+    return '공유 권한이 없어요. 이 계정의 이메일이 publishers 테이블에 있어야 합니다.';
   if (/relation .* does not exist|42P01|column .* does not exist|42703/i.test(message))
     return '테이블 구조가 달라요. Supabase SQL 편집기에서 설정 SQL을 다시 실행하세요.';
   return message;
